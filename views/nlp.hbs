@@ -1,5 +1,122 @@
-<h1>NLP</h1>
+<h1>Análisis del texto: Database as a Symbolic Form de Lev Manovich</h1>
 
+<!-- div donde se inyectará la visualizción de D3js -->
+<div id="viz"></div>
+
+<!-- carga desde el servidor de D3 la librería -->
+<!-- cabe anotar que esta podría estar alojada localmente en la carpeta -->
+<!-- public del proyecto -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<!-- script de JS que hace las peticiones al servidor y crea la visualización-->
+<script type="text/javascript">
+
+// Función encargadad de la visualización de datos por medio de D3
+function viz(data){
+  // selecciona la división donde se inyectará el SVG
+  var svg = d3.select('#viz')
+    .append('svg') // agrega un elemento SVG
+    .attr('width', 700) // al SVG le agrega el atributo ancho de 400px
+    .attr('height', 1500) // al SVG le agrega el atributo alto de 200px
+
+  var elem = svg.selectAll('g') // selecciona todos los elementos `g` (grupos)
+    .data(data) // enlaza los datos del servidor
+
+  var elemEnter = elem.enter()
+      .append('g') // agrega un grupo
+      .attr('transform', function(d,i){ // aplica una transformación al elemento
+        return "translate(350, "+(320*i+100)+")" // calcula la posción relativo a
+                                              // los datos
+      })
+
+  var circulo = elemEnter.append('circle') // agrega un circulo
+  .attr("stroke-width", 3)
+  .attr('dy', -10) // la posición en y
+  .attr('dx', -10) // la posición en x
+    .attr('stroke', '#560000')
+    .attr('fill', '#da005c' )
+
+    .attr('r', function(d){ // el radio dependerá de la cantidad de items en la
+      return d.count * .25 // colección
+    })
+
+  // crea los textos etiquetando cada uno de los círculos
+  var txt = elemEnter.append('text') //agrega un elemento de tipo text
+
+    .attr('dy', -80) // la posición en y
+    .attr('dx', -80) // la posición en x
+    .text(function(d){ // extrae el texto de la información del servidor
+      return d.name
+    })
+
+    var txt = elemEnter.append('text') //agrega un elemento de tipo text
+      .attr('dy', -40) // la posición en y
+      .attr('dx', -60) // la posición en x
+      .text(function(t){ // extrae el texto de la información del servidor
+        return t.count
+      })
+
+}
+
+var data = [
+
+  {
+    count: {{values.length}},
+    name: 'Valores'
+  },
+  {
+    count: {{nouns.length}},
+    name: 'Sustantivos'
+  },
+  {
+    count: {{adjectives.length}},
+    name: 'Adjetivos'
+  },
+  {
+    count: {{acronyms.length}},
+    name: 'Acrónimos'
+  },
+  {
+    count: {{people.length}},
+    name: 'Personas'
+  },
+]
+viz(data)
+
+
+</script>
+
+
+<h1>Valores [{{values.length}}]</h1>
+<ul>
+  {{#each values.list}}
+  <li>
+    {{#each this.terms}}
+      {{this.text}}
+    {{/each}}
+  </li>
+  {{/each}}
+</ul>
+<h1>Acrónimos [{{acronyms.length}}]</h1>
+<ul>
+  {{#each acronyms.list}}
+  <li>
+    {{#each this.terms}}
+      {{this.text}}
+    {{/each}}
+  </li>
+  {{/each}}
+</ul>
+<h1>Adjetivos [{{adjectives.length}}]</h1>
+<ul>
+  {{#each adjectives.list}}
+  <li>
+    {{#each this.terms}}
+      {{this.text}}
+    {{/each}}
+  </li>
+  {{/each}}
+</ul>
 <!-- presenta la lista de sustantivos -->
 <h1>Sustantivos [{{nouns.length}}]</h1>
 <ul>
